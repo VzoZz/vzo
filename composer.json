@@ -1,0 +1,30 @@
+{
+    "name": "vzozz/vzo",
+    "description": "d",
+    "type": "project",
+    "authors": [
+        {
+            "name": "vzo",
+            "email": "leishengabc@163.com"
+        }
+    ],
+    "require": {
+        "filp/whoops": "^2.1"
+    },
+    "autoload":{
+        "files":[
+            "system/help.php"
+        ],
+        "psr-4":{
+            "system\\":"system\\",
+            "les\\":"les\\",
+            "app\\":"app\\"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}
