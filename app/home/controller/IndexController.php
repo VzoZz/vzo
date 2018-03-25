@@ -27,9 +27,18 @@ class IndexController extends Controller
         //执行View类里的make方法和with方法
         //实际上调用了les\view\Base里面的make方法和with方法
         //welcome为要跳转的页面, with里的参数为要传递的变量
-        echo View::make("welcome")->with(compact('vzo', 'v'));
+//        echo View::make("welcome")->with(compact('vzo', 'v'));
 //        echo View::make("welcome");
 //        return View::make('welcome')->with(compact ('vzo','v'));
+        $data = [
+            "name"=>"呵",
+            "age"=>10
+        ];
+//        Student::where("id=1")->update($data);
+//        Student::insert($data);
+//        $res = Student::find(1);
+        $res = Student::first();
+        p($res);
     }
 
     /**

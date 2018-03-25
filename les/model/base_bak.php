@@ -14,9 +14,9 @@ use function Sodium\compare;
 class Base
 {
     private $table;//表名
-    private $where ='';//where条件
-    private $orderBy = '';//orderBy条件
-    private $limit ='';//limit条件
+    private $where;//where条件
+    private $orderBy;//orderBy条件
+    private $limit;//limit条件
     private $column = "*";//显示的列
 //    private $operation = [['add', 'modify'], ['rename', 'drop']];//alter操作数组
     private $names = [];//表的所有字段名
@@ -38,43 +38,6 @@ class Base
 //        p($this->table);
         //初始化和连接数据库
         self::connect();
-    }
-
-    /**
-     * 写入数据
-     */
-    public function insert($data){
-        //p($data);die;
-        //初始化字段名和值的值
-        $fields = '';$values = '';
-        //遍历数组 将对应的字段名和值拼接
-        foreach($data as $k=>$v){
-            //拼接字段名
-            $fields .= $k .',';
-            //拼接值，并给不是int型的添加引号
-            $values .= is_int ($v) ? $v.',' : "'$v'".',';
-        }
-//        p($fields);die;
-//        p($values);die;
-        //拼接字段 将最后面拼接的逗号去掉
-        $fields = rtrim ($fields,',');
-        //拼接值，将最后的逗号去掉
-        $values = rtrim ($values,',');
-        //p($fields);die;
-//        p($values);die;
-        $sql = "insert into ".$this->table." (".$fields.") values (".$values.")";
-//        echo $sql;die;
-        return $this->exec ($sql);
-    }
-
-    /**
-     * 根据条件查找一条数据
-     */
-    public function first(){
-        $sql = "select {$this->column} from {$this->table}{$this->where}{$this->orderBy}{$this->limit}" ;
-//        p($sql);die;
-        //查询数据，currenthi指向第一条数据
-        return current ($this->query ( $sql ));
     }
 
     /**
@@ -127,8 +90,7 @@ class Base
 //        p($key);die;
         $priKey = $this->getPriKey();
         $sql = "select * from " . $this->table . " where " . $priKey . "=" . $key;
-        //换换为一维数组
-        return current($this->query($sql));
+        return $this->query($sql);
     }
 
     /**
@@ -214,10 +176,10 @@ class Base
      * @param $column   显示的列
      * @return $this
      */
-    public function column($column)
+    public function column($column="*")
     {
 //        $this->column = implode(",",$column);
-        $this->column = $column;
+        $this->column = $column ?: "*";
 //        p($this->column);die;
         return $this;
     }
@@ -239,11 +201,6 @@ class Base
      */
     public function del()
     {
-        //如果没有where条件，不执行删除。
-        //避免删除所有数据
-        if(!$this->where){
-            return null;
-        }
 //        $sql = "delete from student where age>20 order by id>2 limit 1";
         $sql = "delete from " . $this->table . $this->where . $this->orderBy . $this->limit;
 //        echo $sql;die;
@@ -258,23 +215,8 @@ class Base
      */
     public function update($update)
     {
-        //防止不加where条件更新所有数据
-        if(!$this->where){
-            return null;
-        }
-//        p($update);
-        $fields = '';
-        //遍历接收的数组
-        //将数据拼接
-        foreach($update as $k=>$v){
-            //判断$v 是否为整形，如果为整形则不加引号，如果为字符串则加引号
-            $fields .= $k . '=' . (is_int ($v)?$v:"'$v'") . ',';
-        }
-//        p($fields);die;
-        //截取最后拼接的逗号
-        $fields = rtrim ($fields,',');
 //        $sql = "update student set name='呵' where id=1";
-        $sql = "update " . $this->table . " set " . $fields . $this->where;
+        $sql = "update " . $this->table . " set " . $update . $this->where;
 //        echo $sql;die;
         return $this->exec($sql);
     }
@@ -356,4 +298,46 @@ class Base
         }
     }
 
+//    //未完成 修改字段
+//    public function alter($operate, $keyWord, $type = "int", $notnull = "1", $default = 0)
+//    {
+//
+////        if(in_array($operate,$this->operation)){
+////            if($operate=="rename"){
+////                $sql = "alter table ".$this->table." rename ".$keyWord;
+////            }
+////        }else{
+////            return null;
+////        }
+//
+//        switch ($operate) {
+//            case in_array($operate, $this->operation[1]):
+//                $sql = "alter table " . $this->table . " " . $operate . " " . $keyWord;
+//                echo $sql;
+//                die;
+//                return $this->query($sql);
+//            case "add":
+//                $sql = "alter table " . $this->table . " add " . $keyWord;
+//        }
+//    }
+//
+//    /**
+//     * 未完成 重命名
+//     * @param string $newname
+//     * @return int|null
+//     * @throws Exception
+//     */
+//    public function rename($newname = '')
+//    {
+//        $sql = " alter table " . $this->table . " rename " . $newname;
+////        echo $sql;die;
+//        return $newname ? $this->exec($sql) : null;
+//    }
+//
+//    //未完成 添加auto_increment
+//    public function auto($bool = true){
+//        if($bool){
+//
+//        }
+//    }
 }
